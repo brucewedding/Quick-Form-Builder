@@ -22,6 +22,7 @@ model Form {
   name        String
   description String   @default("")
   content     String   @default("[]")
+  theme       String   @default("default") // Theme identifier for the form
 
   visits      Int @default(0)
   submissions Int @default(0)

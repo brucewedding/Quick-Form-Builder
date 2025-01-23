@@ -52,13 +52,14 @@ export async function CreateForm(data: formSchemaType) {
     throw new UserNotFoundErr();
   }
 
-  const { name, description } = data;
+  const { name, description, theme } = data;
 
   const form = await prisma.form.create({
     data: {
       userId: user.id,
       name,
       description,
+      theme: theme || "default",
     },
   });
 
@@ -143,7 +144,7 @@ export async function GetFormById(id: number) {
   });
 }
 
-export async function UpdateFormContent(id: number, jsonContent: string) {
+export async function UpdateFormContent(id: number, jsonContent: string, theme?: string) {
   const user = await currentUser();
   if (!user) {
     throw new UserNotFoundErr();
@@ -156,6 +157,7 @@ export async function UpdateFormContent(id: number, jsonContent: string) {
     },
     data: {
       content: jsonContent,
+      ...(theme && { theme }),
     },
   });
 }
@@ -181,6 +183,7 @@ export async function GetFormContentByUrl(formUrl: string) {
   return await prisma.form.update({
     select: {
       content: true,
+      theme: true,
     },
     data: {
       visits: {

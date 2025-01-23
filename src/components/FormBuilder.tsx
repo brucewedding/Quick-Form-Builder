@@ -19,7 +19,7 @@ import useDesigner from "@/hooks/useDesigner";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 
 function FormBuilder({ form }: { form: Form }) {
-  const { setElements, setSelectedElement } = useDesigner();
+  const { setElements, setSelectedElement, setTheme } = useDesigner();
   const [isReady, setIsReady] = useState(false);
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -62,6 +62,7 @@ function FormBuilder({ form }: { form: Form }) {
     const elements = JSON.parse(form.content);
     setElements(elements);
     setSelectedElement(null);
+    setTheme(form.theme || "default");
     const readyTimeout = setTimeout(() => setIsReady(true), 500);
     return () => clearTimeout(readyTimeout);
   }, [form, setElements, isReady, setSelectedElement]);
