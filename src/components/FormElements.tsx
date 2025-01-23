@@ -21,7 +21,8 @@ export type ElementsType =
   | "TextAreaField"
   | "DateField"
   | "SelectField"
-  | "CheckboxField";
+  | "CheckboxField"
+  | "NewElementField"; // Add your new element type here
 
 export type SubmitFunction = (key: string, value: string) => void;
 
@@ -60,6 +61,8 @@ export type FormElementInstance = {
 type FormElementsType = {
   [key in ElementsType]: FormElement;
 };
+import { NewElementFormElement } from "./field/NewElementField";
+
 export const FormElements: FormElementsType = {
   TextField: TextFieldFormElement,
   TitleField: TitleFieldFormElement,
@@ -72,4 +75,5 @@ export const FormElements: FormElementsType = {
   DateField: DateFieldFormElement,
   SelectField: SelectFieldFormElement,
   CheckboxField: CheckboxFieldFormElement,
+  NewElementField: NewElementFormElement,
 };
