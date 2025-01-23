@@ -24,6 +24,7 @@ function FormElementsSidebar() {
         <SidebarBtnElement formElement={FormElements.SelectField} />
         <SidebarBtnElement formElement={FormElements.CheckboxField} />
         <SidebarBtnElement formElement={FormElements.ImageUploadField} />
+        <SidebarBtnElement formElement={FormElements.RatingScaleField} />
       </div>
     </div>
   );

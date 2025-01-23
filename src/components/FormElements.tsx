@@ -22,7 +22,8 @@ export type ElementsType =
   | "DateField"
   | "SelectField"
   | "CheckboxField"
-  | "ImageUploadField";
+  | "ImageUploadField"
+  | "RatingScaleField";
 
 export type SubmitFunction = (key: string, value: string) => void;
 
@@ -62,6 +63,7 @@ type FormElementsType = {
   [key in ElementsType]: FormElement;
 };
 import { ImageUploadFormElement } from "./field/ImageUploadField";
+import { RatingScaleFormElement } from "./field/RatingScaleField";
 
 export const FormElements: FormElementsType = {
   TextField: TextFieldFormElement,
@@ -76,4 +78,5 @@ export const FormElements: FormElementsType = {
   SelectField: SelectFieldFormElement,
   CheckboxField: CheckboxFieldFormElement,
   ImageUploadField: ImageUploadFormElement,
+  RatingScaleField: RatingScaleFormElement,
 };
