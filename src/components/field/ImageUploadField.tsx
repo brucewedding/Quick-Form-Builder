@@ -75,11 +75,11 @@ function DesignerComponent({ elementInstance }: { elementInstance: FormElementIn
   const { label, helperText, required, prompt, buttonText, width, height } = element.extraAttributes;
   return (
     <div className="flex flex-col gap-2 w-full">
-      <Label>
+      <Label className="text-center w-full pb-2">
         {label}
         {required && "*"}
       </Label>
-      <div className={`${width} ${height} border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50`}>
+      <div className={`${width} ${height} border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 mx-auto`}>
         <div className="text-gray-400">
           <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path 
@@ -186,11 +186,11 @@ function FormComponent({
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <Label className={`${isInvalid ? "text-red-500" : ""}`}>
+      <Label className={`${isInvalid ? "text-red-500" : ""} text-center w-full pb-2`}>
         {element.extraAttributes.label}
         {element.extraAttributes.required && "*"}
       </Label>
-      <div className={`${width} ${height} border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50`}>
+      <div className={`${width} ${height} border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 mx-auto`}>
         {previewUrl ? (
           <img 
             src={previewUrl} 
