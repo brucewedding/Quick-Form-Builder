@@ -9,6 +9,9 @@ import { SubTitleFieldFormElement } from "./field/SubTitleField";
 import { TextAreaFormElement } from "./field/TextAreaField";
 import { TextFieldFormElement } from "./field/TextField";
 import { TitleFieldFormElement } from "./field/TitleField";
+import { DualImageUploadFormElement } from "./field/DualImageUpload";
+import { ImageUploadFormElement } from "./field/ImageUploadField";
+import { RatingScaleFormElement } from "./field/RatingScaleField";
 
 export type ElementsType =
   | "TextField"
@@ -23,7 +26,8 @@ export type ElementsType =
   | "SelectField"
   | "CheckboxField"
   | "ImageUploadField"
-  | "RatingScaleField";
+  | "RatingScaleField"
+  | "DualImageUpload";
 
 export type SubmitFunction = (key: string, value: string) => void;
 
@@ -62,8 +66,6 @@ export type FormElementInstance = {
 type FormElementsType = {
   [key in ElementsType]: FormElement;
 };
-import { ImageUploadFormElement } from "./field/ImageUploadField";
-import { RatingScaleFormElement } from "./field/RatingScaleField";
 
 export const FormElements: FormElementsType = {
   TextField: TextFieldFormElement,
@@ -79,4 +81,5 @@ export const FormElements: FormElementsType = {
   CheckboxField: CheckboxFieldFormElement,
   ImageUploadField: ImageUploadFormElement,
   RatingScaleField: RatingScaleFormElement,
+  DualImageUpload: DualImageUploadFormElement,
 };
