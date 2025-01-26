@@ -4,6 +4,7 @@ import { Form } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 import PreviewDialogBtn from "./PreviewDialogBtn";
 import PublishFormBtn from "./PublishFormBtn";
+import GenerateCodeBtn from "./GenerateCodeBtn";
 import SaveFormBtn from "./SaveFormBtn";
 import Designer from "./Designer";
 import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
@@ -95,30 +96,31 @@ function FormBuilder({ form }: { form: Form }) {
             </h3>
             <div className="my-4 flex flex-col gap-2 items-center w-full border-b pb-4">
               <Input className="w-full" readOnly value={shareUrl} />
-              <Button
-                className="mt-2 w-full"
-                onClick={() => {
-                  navigator.clipboard.writeText(shareUrl);
-                  toast({
-                    title: "Copied!",
-                    description: "Link copied to clipboard",
-                  });
-                }}
-              >
-                Copy link
-              </Button>
+              <div className="flex gap-2 w-full">
+                <Button
+                  className="w-full"
+                  onClick={() => {
+                    navigator.clipboard.writeText(shareUrl);
+                    toast({
+                      title: "Copied!",
+                      description: "Link copied to clipboard",
+                    });
+                  }}
+                >
+                  Copy link
+                </Button>
+                <GenerateCodeBtn id={form.id} />
+              </div>
             </div>
-            <div className="flex justify-between">
-              <Button variant={"link"} asChild>
-                <Link href={"/"} className="gap-2">
-                  <BsArrowLeft />
-                  Go back home
+            <div className="flex justify-between items-center w-full mt-4">
+              <Button asChild variant="link">
+                <Link href="/dashboard" className="gap-2">
+                  <BsArrowLeft /> Back to dashboard
                 </Link>
               </Button>
-              <Button variant={"link"} className="opacity-70" asChild>
-                <Link href={`/forms/${form.id}`} className="gap-2">
-                  Form details
-                  <BsArrowRight />
+              <Button asChild variant="link">
+                <Link href={shareUrl} target="_blank" className="gap-2">
+                  View form <BsArrowRight />
                 </Link>
               </Button>
             </div>
@@ -151,6 +153,7 @@ function FormBuilder({ form }: { form: Form }) {
                         <div className="flex flex-col gap-3">
                           <SaveFormBtn id={form.id} />
                           <PublishFormBtn id={form.id} />
+                          <GenerateCodeBtn id={form.id} />
                         </div>
                       </div>}
                     </div>
@@ -158,14 +161,11 @@ function FormBuilder({ form }: { form: Form }) {
                     <>
                       <SaveFormBtn id={form.id} />
                       <PublishFormBtn id={form.id} />
+                      <GenerateCodeBtn id={form.id} />
                     </>
                   )}
               </>
             )}
-            {/* <div className="flex flex-col gap-3">
-                          <SaveFormBtn id={form.id} />
-                          <PublishFormBtn id={form.id} />
-                        </div> */}
           </div>
         </nav>
         <div className="flex w-full flex-grow items-center justify-center relative overflow-y-auto h-[200px] bg-accent bg-[url(/paper.svg)] dark:bg-[url(/paper-dark.svg)]">
