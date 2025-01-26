@@ -46,7 +46,7 @@ export const PictureSelectFormElement: FormElement = {
       helperText: "Select one of the images",
       required: false,
       images: [{
-        src: '/api/placeholder/200/200',
+        src: 'https://placehold.co/200x200',
         label: 'Option 1'
       }]
     },
@@ -223,7 +223,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
 
   const addImage = () => {
     const newImages = [...images, { 
-      src: '/api/placeholder/200/200',
+      src: 'https://placehold.co/200x200',
       label: `Option ${images.length + 1}`
     }];
     setImages(newImages);

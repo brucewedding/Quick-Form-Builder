@@ -69,14 +69,14 @@ const FormCard = ({ form }: { form: Form }) => {
         <Card className="min-h-[200px]">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 justify-between relative">
-                    <h2 className="font-semibold leading-6 text-[1.2rem] lg:text-[1.4rem]">{form.name}</h2>
+                    <span className="font-semibold leading-6 text-[1.2rem] lg:text-[1.4rem]">{form.name}</span>
                     {form.published && <Badge>Published</Badge>}
                     {!form.published && <Badge variant={"destructive"}>Draft</Badge>}
                     <AlertDialog>
-                        <AlertDialogTrigger>
+                        <AlertDialogTrigger asChild>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button size="icon" variant="ghost" className="rounded-full">
+                                    <Button size="icon" variant="ghost" className="rounded-full" type="button">
                                         <PiDotsThreeOutlineVerticalFill className="w-4 h-4" />
                                         <span className="sr-only">Actions</span>
                                     </Button>
@@ -153,19 +153,3 @@ const FormCard = ({ form }: { form: Form }) => {
 };
 
 export default FormCard;
-
-
-{/* <DropdownMenu>
-<DropdownMenuTrigger asChild>
-    <Button size="icon" variant="ghost" className="rounded-full">
-        <PiDotsThreeOutlineVerticalFill className="w-4 h-4" />
-        <span className="sr-only">Actions</span>
-    </Button>
-</DropdownMenuTrigger>
-<DropdownMenuContent align="end">
-    <DropdownMenuItem className="cursor-pointer" onClick={handleDelete}>
-        <RiDeleteBin5Line className="mr-2" />
-        Delete
-    </DropdownMenuItem>
-</DropdownMenuContent>
-</DropdownMenu> */}

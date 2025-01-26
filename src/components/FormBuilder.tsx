@@ -27,12 +27,13 @@ function FormBuilder({ form }: { form: Form }) {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
+    setIsSmallScreen(window.innerWidth <= 768);
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 768); // Adjust the max width as per your requirement
     };
 
     // Initial check on mount
-    handleResize();
+    // handleResize();
 
     // Event listener for window resize
     window.addEventListener('resize', handleResize);
