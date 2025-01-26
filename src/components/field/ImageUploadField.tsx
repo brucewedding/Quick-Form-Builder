@@ -157,29 +157,38 @@ function FormComponent({
     });
   };
 
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
       setFileName(file.name);
       
-      const reader = new FileReader();
-      reader.onload = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      let finalFile = file;
       
       const img = new Image();
       img.src = URL.createObjectURL(file);
       
       img.onload = async () => {
-        let finalFile = file;
-        
         if (img.width > maxDimension || img.height > maxDimension) {
           finalFile = await resizeImage(file);
         }
         
         URL.revokeObjectURL(img.src);
-        submitValue?.(elementInstance.id, finalFile.name);
+        
+        // Convert the final image to base64 and set preview
+        const base64Data = await convertToBase64(finalFile);
+        setPreviewUrl(base64Data);
+        
+        // Submit the base64 data instead of just the filename
+        submitValue?.(elementInstance.id, base64Data);
       };
     }
   };

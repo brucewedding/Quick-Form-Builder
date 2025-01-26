@@ -36,6 +36,15 @@ const propertiesSchema = z.object({
   }))
 });
 
+const convertImageToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = error => reject(error);
+  });
+};
+
 export const PictureSelectFormElement: FormElement = {
   type: "PictureSelectField",
   construct: (id: string) => ({
@@ -45,10 +54,7 @@ export const PictureSelectFormElement: FormElement = {
       label: "Picture Select",
       helperText: "Select one of the images",
       required: false,
-      images: [{
-        src: "https://placehold.co/200x200",
-        label: 'Option 1'
-      }]
+      images: []
     },
   }),
 
@@ -165,9 +171,7 @@ type propertiesFormSchemaType = z.infer<typeof propertiesSchema>;
 function PropertiesComponent({ elementInstance }: { elementInstance: FormElementInstance }) {
   const element = elementInstance as CustomInstance;
   const { updateElement } = useDesigner();
-  const [images, setImages] = useState(element.extraAttributes.images);
-
-  const form = useForm<propertiesFormSchemaType>({
+  const form = useForm<z.infer<typeof propertiesSchema>>({
     resolver: zodResolver(propertiesSchema),
     mode: "onBlur",
     defaultValues: {
@@ -179,39 +183,46 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
   });
 
   useEffect(() => {
-    form.reset(element.extraAttributes);
+    form.reset({
+      label: element.extraAttributes.label,
+      helperText: element.extraAttributes.helperText,
+      required: element.extraAttributes.required,
+      images: element.extraAttributes.images,
+    });
   }, [element, form]);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const newImages = [...images];
-        newImages[index] = {
-          ...newImages[index],
-          src: reader.result as string
-        };
-        setImages(newImages);
-        updateElement(element.id, {
-          ...element,
-          extraAttributes: {
-            ...element.extraAttributes,
-            images: newImages
-          }
-        });
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const base64Image = await convertImageToBase64(file);
+      const updatedImages = [...form.getValues("images")];
+      updatedImages[index] = {
+        ...updatedImages[index],
+        src: base64Image
       };
-      reader.readAsDataURL(file);
+      
+      form.setValue("images", updatedImages);
+      updateElement(element.id, {
+        ...element,
+        extraAttributes: {
+          ...element.extraAttributes,
+          images: updatedImages
+        }
+      });
+    } catch (error) {
+      console.error("Error converting image:", error);
     }
   };
 
   const handleLabelChange = (index: number, newLabel: string) => {
-    const newImages = [...images];
+    const newImages = [...form.getValues("images")];
     newImages[index] = {
       ...newImages[index],
       label: newLabel
     };
-    setImages(newImages);
+    form.setValue("images", newImages);
     updateElement(element.id, {
       ...element,
       extraAttributes: {
@@ -222,11 +233,11 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
   };
 
   const addImage = () => {
-    const newImages = [...images, { 
+    const newImages = [...form.getValues("images"), { 
       src: 'https://placehold.co/200x200',
-      label: `Option ${images.length + 1}`
+      label: `Option ${form.getValues("images").length + 1}`
     }];
-    setImages(newImages);
+    form.setValue("images", newImages);
     updateElement(element.id, {
       ...element,
       extraAttributes: {
@@ -237,8 +248,8 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
   };
 
   const removeImage = (index: number) => {
-    const newImages = images.filter((_, i) => i !== index);
-    setImages(newImages);
+    const newImages = form.getValues("images").filter((_, i) => i !== index);
+    form.setValue("images", newImages);
     updateElement(element.id, {
       ...element,
       extraAttributes: {
@@ -251,7 +262,6 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
   function applyChanges(values: propertiesFormSchemaType) {
     const newValues = {
       ...values,
-      images
     };
     updateElement(element.id, {
       ...element,
@@ -329,7 +339,7 @@ function PropertiesComponent({ elementInstance }: { elementInstance: FormElement
         <div className="space-y-4">
           <FormLabel>Image Options</FormLabel>
           <div className="grid grid-cols-2 gap-4">
-            {images.map((image, index) => (
+            {form.getValues("images").map((image, index) => (
               <div key={index} className="flex flex-col items-center">
                 <div className="w-full space-y-2">
                   <div className="relative">
