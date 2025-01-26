@@ -2,6 +2,7 @@ import { CheckboxFieldFormElement } from "./field/CheckBoxField";
 import { DateFieldFormElement } from "./field/DateField";
 import { NumberFieldFormElement } from "./field/NumberField";
 import { ParagprahFieldFormElement } from "./field/ParagraphField";
+import { PictureSelectFormElement } from "./field/PictureSelectField";
 import { SelectFieldFormElement } from "./field/SelectField";
 import { SeparatorFieldFormElement } from "./field/SeparatorField";
 import { SpacerFieldFormElement } from "./field/SpacerField";
@@ -27,7 +28,8 @@ export type ElementsType =
   | "CheckboxField"
   | "ImageUploadField"
   | "RatingScaleField"
-  | "DualImageUpload";
+  | "DualImageUpload"
+  | "PictureSelectField";
 
 export type SubmitFunction = (key: string, value: string) => void;
 
@@ -82,4 +84,5 @@ export const FormElements: FormElementsType = {
   ImageUploadField: ImageUploadFormElement,
   RatingScaleField: RatingScaleFormElement,
   DualImageUpload: DualImageUploadFormElement,
+  PictureSelectField: PictureSelectFormElement,
 };
