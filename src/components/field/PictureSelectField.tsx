@@ -46,7 +46,7 @@ export const PictureSelectFormElement: FormElement = {
       helperText: "Select one of the images",
       required: false,
       images: [{
-        src: 'https://placehold.co/200x200',
+        src: "https://placehold.co/200x200",
         label: 'Option 1'
       }]
     },
