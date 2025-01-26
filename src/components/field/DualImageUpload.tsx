@@ -63,10 +63,15 @@ export const DualImageUploadFormElement: FormElement = {
   formComponent: FormComponent,
   propertiesComponent: PropertiesComponent,
 
-  validate: (formElement: FormElementInstance, currentValue: string[]): boolean => {
+  validate: (formElement: FormElementInstance, currentValue: string): boolean => {
     const element = formElement as CustomInstance;
     if (element.extraAttributes.required) {
-      return currentValue.length === 2 && currentValue.every(value => value.length > 0);
+      try {
+        const parsedValue = JSON.parse(currentValue);
+        return Array.isArray(parsedValue) && parsedValue.length === 2 && parsedValue.every(value => value.length > 0);
+      } catch (e) {
+        return false;
+      }
     }
     return true;
   },
@@ -105,15 +110,28 @@ function FormComponent({
   defaultValue,
 }: {
   elementInstance: FormElementInstance;
-  submitValue?: (key: string, value: string[]) => void;
+  submitValue?: (key: string, value: string) => void;
   isInvalid?: boolean;
-  defaultValue?: string[];
+  defaultValue?: string;
 }) {
   const element = elementInstance as CustomInstance;
   const [previewUrls, setPreviewUrls] = useState<(string | null)[]>([null, null]);
   const [fileNames, setFileNames] = useState(["No file chosen", "No file chosen"]);
   const fileInputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
   const { prompt, buttonText, width, height, maxDimension } = element.extraAttributes;
+
+  useEffect(() => {
+    if (defaultValue) {
+      try {
+        const parsedNames = JSON.parse(defaultValue);
+        if (Array.isArray(parsedNames)) {
+          setFileNames(parsedNames);
+        }
+      } catch (e) {
+        console.error("Failed to parse default value:", e);
+      }
+    }
+  }, [defaultValue]);
 
   const resizeImage = (originalFile: File): Promise<File> => {
     return new Promise((resolve) => {
@@ -188,7 +206,7 @@ function FormComponent({
         const newFileNames = [...fileNames];
         newFileNames[index] = finalFile.name;
         setFileNames(newFileNames);
-        submitValue?.(elementInstance.id, newFileNames);
+        submitValue?.(elementInstance.id, JSON.stringify(newFileNames));
       };
     }
   };

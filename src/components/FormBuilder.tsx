@@ -17,6 +17,7 @@ import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import Confetti from "react-confetti";
 import useDesigner from "@/hooks/useDesigner";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
+import { formThemes } from "@/schemas/form";
 
 function FormBuilder({ form }: { form: Form }) {
   const { setElements, setSelectedElement, setTheme } = useDesigner();
@@ -62,7 +63,8 @@ function FormBuilder({ form }: { form: Form }) {
     const elements = JSON.parse(form.content);
     setElements(elements);
     setSelectedElement(null);
-    setTheme(form.theme || "default");
+    const theme = form.theme as keyof typeof formThemes || "default";
+    setTheme(theme);
     const readyTimeout = setTimeout(() => setIsReady(true), 500);
     return () => clearTimeout(readyTimeout);
   }, [form, setElements, isReady, setSelectedElement]);
