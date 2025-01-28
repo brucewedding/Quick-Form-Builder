@@ -23,6 +23,7 @@ model Form {
   FormSubmissions FormSubmissions[]
 
   @@unique([name, userId])
+  @@index([userId, id])
 }
 
 model FormSubmissions {

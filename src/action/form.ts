@@ -54,10 +54,34 @@ export async function CreateForm(data: formSchemaType) {
 
   const { name, description, theme } = data;
 
+  // Check for existing forms with the same name
+  const existingForms = await prisma.form.findMany({
+    where: {
+      userId: user.id,
+      name: {
+        startsWith: name,
+      },
+    },
+    select: {
+      name: true,
+    },
+  });
+
+  // If there are existing forms with the same name, append a number
+  let newName = name;
+  if (existingForms.length > 0) {
+    const existingNames = new Set(existingForms.map(f => f.name));
+    let counter = 1;
+    while (existingNames.has(newName)) {
+      newName = `${name} (${counter})`;
+      counter++;
+    }
+  }
+
   const form = await prisma.form.create({
     data: {
       userId: user.id,
-      name,
+      name: newName,
       description,
       theme: theme || "default",
     },
@@ -69,42 +93,33 @@ export async function CreateForm(data: formSchemaType) {
 
   return form.id;
 }
+
 export async function DeleteForm(formId: number) {
   const user = await currentUser();
   if (!user) {
     throw new UserNotFoundErr();
   }
 
-  // Check if the form exists before attempting to delete it
-  const existingForm = await prisma.form.findUnique({
+  // Check if the form exists and belongs to the user
+  const existingForm = await prisma.form.findFirst({
     where: {
       id: formId,
+      userId: user.id,
     },
   });
 
   if (!existingForm) {
-    throw new Error("Form not found");
+    throw new Error("Form not found or you don't have permission to delete it");
   }
 
-  // Check if there are any related records (e.g., submissions) before deleting the form
-  const submissions = await prisma.formSubmissions.findMany({
+  // Delete related submissions first
+  await prisma.formSubmissions.deleteMany({
     where: {
       formId: formId,
     },
   });
 
-  // Delete related records first
-  await Promise.all(
-    submissions.map(async (submission) => {
-      await prisma.formSubmissions.delete({
-        where: {
-          id: submission.id,
-        },
-      });
-    })
-  );
-
-  // Now delete the form
+  // Delete the form
   await prisma.form.delete({
     where: {
       id: formId,
@@ -136,10 +151,10 @@ export async function GetFormById(id: number) {
     throw new UserNotFoundErr();
   }
 
-  return await prisma.form.findUnique({
+  return await prisma.form.findFirst({
     where: {
-      userId: user.id,
       id,
+      userId: user.id,
     },
   });
 }
@@ -173,13 +188,24 @@ export async function PublishForm(id: number) {
     throw new UserNotFoundErr();
   }
 
+  // First check if the form exists and belongs to the user
+  const form = await prisma.form.findFirst({
+    where: {
+      id,
+      userId: user.id,
+    },
+  });
+
+  if (!form) {
+    throw new Error("Form not found");
+  }
+
   return await prisma.form.update({
+    where: {
+      id,
+    },
     data: {
       published: true,
-    },
-    where: {
-      userId: user.id,
-      id,
     },
   });
 }
